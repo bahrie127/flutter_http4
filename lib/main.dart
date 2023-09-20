@@ -31,34 +31,35 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-        appBar: AppBar(title: const Text('http example update')),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              controller: _controller,
-              decoration: const InputDecoration(hintText: 'Enter Title'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  futureAlbum = NetworkManager().updateAlbum(1, _controller.text);
-                });
-              },
-              child: const Text('Update Data'),
-            ),
-            FutureBuilder<Album>(
-              future: futureAlbum,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Center(child: Text(snapshot.data!.title));
-                } else if (snapshot.hasError) {
-                  return Text('${snapshot.error}');
-                }
-                return const CircularProgressIndicator();
-              },
-            ),
-          ],
+        appBar: AppBar(title: const Text('http example delete')),
+        body: FutureBuilder<Album>(
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(snapshot.data!.title.isEmpty
+                        ? 'Deleted'
+                        : snapshot.data!.title),
+                    ElevatedButton(
+                      child: const Text('Delete Data'),
+                      onPressed: () {
+                        setState(() {
+                          futureAlbum = NetworkManager()
+                              .deleteAlbum(snapshot.data!.id.toString());
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Text('${snapshot.error}');
+            }
+            return const CircularProgressIndicator();
+          },
+          future: futureAlbum,
         ),
       ),
     );
